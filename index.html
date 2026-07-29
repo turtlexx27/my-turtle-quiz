@@ -17,7 +17,31 @@
         </div>
     </div>
 </div>
-
+<div id="jackpot-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="text-align: center;">
+        
+        <!-- 第一階段：輸入資料表單 -->
+        <div id="jackpot-form-container">
+            <h2 style="color: #ff3b30; margin-bottom: 5px;">特別獎勵！</h2>
+            <p style="margin-top: 0;">您已解鎖全圖鑑，請輸入資料獲取抽獎資格：</p>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0;">
+                <input type="text" id="jackpot-lastname" placeholder="姓" class="jackpot-input">
+                <input type="text" id="jackpot-firstname" placeholder="名" class="jackpot-input">
+                <input type="date" id="jackpot-birthday" class="jackpot-input">
+                <input type="text" id="jackpot-class" placeholder="班級" class="jackpot-input">
+                <input type="number" id="jackpot-seat" placeholder="座號" class="jackpot-input">
+            </div>
+            <button id="jackpot-submit-btn" class="primary-btn">確認送出</button>
+        </div>
+        
+        <!-- 第二階段：恭喜畫面 (預設隱藏) -->
+        <div id="jackpot-success-container" style="display: none;">
+            <h1 style="color: #ff3b30; font-size: 28px;">恭喜你贏得哀鳳17pro獲取機會！</h1>
+            <button id="jackpot-claim-btn" class="primary-btn" style="margin-top: 30px; background-color: #ff3b30; color: white;">馬上拿</button>
+        </div>
+        
+    </div>
+</div>
 <body>
     <div id="floating-bg"></div>
     <!-- 首頁 -->
@@ -27,6 +51,7 @@
         <button id="start-btn">開始</button>
         <button id="collection-btn-start" class="secondary-btn">龜龜圖鑑</button>
         <button id="clear-btn" class="secondary-btn" style="color: #000000db;background: #d50000;">清除所有資料</button>
+        <button onclick="document.getElementById('jackpot-modal').style.display='flex'" style="background: red; color: white;">強制開啟彩蛋</button>
     </div>
 
     <!-- 測驗頁 -->

@@ -258,15 +258,15 @@ function showResult() {
 
     // 3. 全圖鑑彩蛋觸發邏輯 (移到外面，並加上防重複機制)
     // 條件：數量達到 16 隻，且尚未顯示過彩蛋
-    if (unlockedTurtles.length >= 16 && localStorage.getItem("jackpotShown") !== "true") {
-        // 立刻打上標記，確保這個彩蛋就算重整網頁，這輩子也只會觸發這一次
-        localStorage.setItem("jackpotShown", "true");
-        
-        // 延遲 1.5 秒彈出，讓玩家能先看到結果畫面
-        setTimeout(() => {
-            document.getElementById("jackpot-modal").style.display = "flex";
-        }, 1500);
-    }
+    setTimeout(() => {
+        const jackpot = document.getElementById("jackpot-modal");
+        if(jackpot) {
+            jackpot.style.display = "flex";
+            jackpot.style.zIndex = "9999"; // 強制拉到最上層
+        } else {
+            console.log("找不到彩蛋視窗的 HTML");
+        }
+    }, 1500);
     // 更新飄動系統，並把背景顯示出來
     initFloatingTurtles();
     document.getElementById("floating-bg").style.display = "block";
@@ -464,8 +464,8 @@ function animateTurtles() {
     
     if (winWidth <= 900) {
         // 這是手機版的設定
-        shiftX = 0; 
-        shiftY = 0; 
+        shiftX = -50; 
+        shiftY = -50; 
     } else {
         // 這是電腦版的設定
         shiftX = 40; 
