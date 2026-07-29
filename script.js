@@ -439,8 +439,17 @@ function animateTurtles() {
     const numTurtles = floatingTurtles.length;
 
     // 💡 碰撞箱偏移量 (數值越大，圖片就越往左上縮，讓碰撞箱在視覺上往右下移動)
-    const shiftX = 40; 
-    const shiftY = 40;
+    let shiftX, shiftY;
+    
+    if (winWidth <= 900) {
+        // 這是手機版的設定
+        shiftX = 10; 
+        shiftY = 10; 
+    } else {
+        // 這是電腦版的設定
+        shiftX = 40; 
+        shiftY = 40; 
+    }
 
     // 1. 移動碰撞箱的中心點 (現在 t.x 與 t.y 代表的是真實碰撞中心的座標)
     floatingTurtles.forEach(t => {
