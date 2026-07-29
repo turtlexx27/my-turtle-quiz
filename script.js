@@ -245,20 +245,28 @@ function showResult() {
     
     const resultKey = `${levelX}_${levelY}`;
     const finalResult = resultData[resultKey];
-    // 如果這隻龜龜還沒被解鎖，就把它加進清單並存檔
+
+   // 1. 存檔邏輯 (只負責存新龜龜)
     if (!unlockedTurtles.includes(resultKey)) {
         unlockedTurtles.push(resultKey);
         localStorage.setItem("unlockedTurtles", JSON.stringify(unlockedTurtles));
-        
-        // 新增這段：檢查是否達到 16 隻
-        if (unlockedTurtles.length === 16) {
-            // 延遲 1.5 秒彈出，讓玩家有時間先看一眼最後一隻龜龜
-            setTimeout(() => {
-                document.getElementById("jackpot-modal").style.display = "flex";
-            }, 1500);
-        }
     }
 
+    // 2. 更新背景飄動
+    initFloatingTurtles();
+    document.getElementById("floating-bg").style.display = "block";
+
+    // 3. 全圖鑑彩蛋觸發邏輯 (移到外面，並加上防重複機制)
+    // 條件：數量達到 16 隻，且尚未顯示過彩蛋
+    if (unlockedTurtles.length >= 16 && localStorage.getItem("jackpotShown") !== "true") {
+        // 立刻打上標記，確保這個彩蛋就算重整網頁，這輩子也只會觸發這一次
+        localStorage.setItem("jackpotShown", "true");
+        
+        // 延遲 1.5 秒彈出，讓玩家能先看到結果畫面
+        setTimeout(() => {
+            document.getElementById("jackpot-modal").style.display = "flex";
+        }, 1500);
+    }
     // 更新飄動系統，並把背景顯示出來
     initFloatingTurtles();
     document.getElementById("floating-bg").style.display = "block";
@@ -396,7 +404,7 @@ document.getElementById("clear-btn").addEventListener("click", () => {
         
         // 2. 清除程式內的變數
         unlockedTurtles = [];
-        
+        localStorage.removeItem("jackpotShown");
         // 3. 重新渲染圖鑑 (全部變回未解鎖)
         renderCollection();
         
@@ -456,8 +464,8 @@ function animateTurtles() {
     
     if (winWidth <= 900) {
         // 這是手機版的設定
-        shiftX = -30; 
-        shiftY = -30; 
+        shiftX = 0; 
+        shiftY = 0; 
     } else {
         // 這是電腦版的設定
         shiftX = 40; 
