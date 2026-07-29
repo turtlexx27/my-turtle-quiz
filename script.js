@@ -1,3 +1,5 @@
+// 讀取已經解鎖的龜龜 (透過 localStorage，關掉網頁也不會不見)
+let unlockedTurtles = JSON.parse(localStorage.getItem("unlockedTurtles")) || [];
 // 1. 題庫資料（共 8 題，每題 4 個選項）
 const quizData = [
     {
@@ -126,8 +128,19 @@ function getLevel(score) {
 
 // 6. 開始測驗 (含年齡檢查)
 document.getElementById("start-btn").addEventListener("click", () => {
+    if (sessionStorage.getItem("isAdult") == "true") {
+        startPage.classList.remove("active");
+        quizPage.classList.add("active");
+        currentQuestionIndex = 0;
+        scoreHistory = [];
+        userScores = { x: 0, y: 0 };
+        renderQuestion();
+        return;
+    }
+
     const isAdult = confirm("此測驗含降智內容，請確認您已年滿 18 歲");
     if (isAdult) {
+        sessionStorage.setItem("isAdult", "true");
         startPage.classList.remove("active");
         quizPage.classList.add("active");
         currentQuestionIndex = 0;
@@ -232,7 +245,10 @@ function showResult() {
     
     const resultKey = `${levelX}_${levelY}`;
     const finalResult = resultData[resultKey];
-    
+    if (!unlockedTurtles.includes(resultKey)) {
+        unlockedTurtles.push(resultKey);
+        localStorage.setItem("unlockedTurtles", JSON.stringify(unlockedTurtles));
+    }
     document.getElementById("result-title").innerText = finalResult.title;
     // 使用 innerHTML 讓結果敘述裡的 <br> 可以正常換行
     document.getElementById("result-desc").innerHTML = finalResult.desc;
@@ -290,3 +306,140 @@ function preloadImages() {
 
 // 當網頁一打開，就立刻執行預載
 window.addEventListener("load", preloadImages);
+// ==========================================
+// 圖鑑系統邏輯
+// ==========================================
+const collectionModal = document.getElementById("collection-modal");
+const closeCollectionBtn = document.getElementById("close-collection");
+
+// 開啟圖鑑按鈕事件 (首頁與結果頁)
+document.getElementById("collection-btn-start").addEventListener("click", openCollection);
+document.getElementById("collection-btn-result").addEventListener("click", openCollection);
+
+// 關閉圖鑑按鈕事件
+closeCollectionBtn.addEventListener("click", () => {
+    collectionModal.style.display = "none";
+});
+
+// 點擊視窗外面的半透明黑底，也可以關閉圖鑑
+window.addEventListener("click", (e) => {
+    if (e.target === collectionModal) {
+        collectionModal.style.display = "none";
+    }
+});
+
+// 打開圖鑑並生成 16 個格子
+function openCollection() {
+    collectionModal.style.display = "flex";
+    renderCollection();
+    document.querySelector("#collection-modal .modal-content").scrollTop = 0;
+}
+
+// 渲染圖鑑網格內容
+function renderCollection() {
+    const grid = document.getElementById("collection-grid");
+    grid.innerHTML = ""; // 先清空，避免重複生成
+    
+    // 走訪 resultData 裡的 16 種組合
+    Object.keys(resultData).forEach(key => {
+        const turtle = resultData[key];
+        const isUnlocked = unlockedTurtles.includes(key); // 檢查這把鑰匙是否在已解鎖清單中
+        
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "collection-item";
+        
+        // 如果還沒解鎖，套用 .locked 樣式 (CSS 會自動幫圖片打霧)
+        if (!isUnlocked) {
+            itemDiv.classList.add("locked");
+        }
+        
+        // 如果沒有圖片路徑，預防性給個空值
+        const imgSrc = turtle.img ? turtle.img : "";
+        
+        // 未解鎖的名稱顯示問號
+        const titleText = isUnlocked ? turtle.title : "??? 龜";
+
+        // 把圖片跟文字塞進格子裡
+        itemDiv.innerHTML = `
+            <img src="${imgSrc}" alt="${titleText}">
+            <p>${titleText}</p>
+        `;
+        
+        grid.appendChild(itemDiv);
+    });
+}
+// ==========================================
+// 解鎖龜龜背景飄動系統
+// ==========================================
+const floatingBg = document.getElementById("floating-bg");
+let floatingTurtles = [];
+
+function initFloatingTurtles() {
+    floatingBg.innerHTML = "";
+    floatingTurtles = [];
+    
+    // 讀取目前解鎖的進度
+    const currentUnlocked = JSON.parse(localStorage.getItem("unlockedTurtles")) || [];
+    
+    currentUnlocked.forEach(key => {
+        const turtle = resultData[key];
+        if (turtle && turtle.img) {
+            const img = document.createElement("img");
+            img.src = turtle.img;
+            img.className = "floating-turtle";
+            
+            const size = 70; // 對應 CSS 設定的寬度
+            
+            // 隨機初始位置
+            const x = Math.random() * (window.innerWidth - size);
+            const y = Math.random() * (window.innerHeight - size);
+            
+            // 隨機移動速度
+            let vx = (Math.random() - 0.5) * 3;
+            let vy = (Math.random() - 0.5) * 3;
+            
+            // 避免速度太慢停在原地，強迫給個基本速度
+            if (Math.abs(vx) < 0.5) vx = vx > 0 ? 1.5 : -1.5;
+            if (Math.abs(vy) < 0.5) vy = vy > 0 ? 1.5 : -1.5;
+            
+            floatingBg.appendChild(img);
+            
+            floatingTurtles.push({ element: img, x, y, vx, vy, size });
+        }
+    });
+}
+
+function animateTurtles() {
+    const winWidth = window.innerWidth;
+    const winHeight = window.innerHeight;
+    
+    floatingTurtles.forEach(t => {
+        t.x += t.vx;
+        t.y += t.vy;
+        
+        // 邊界碰撞判定 (碰到邊緣就反轉速度)
+        if (t.x <= 0) {
+            t.x = 0;
+            t.vx *= -1;
+        } else if (t.x + t.size >= winWidth) {
+            t.x = winWidth - t.size;
+            t.vx *= -1;
+        }
+        
+        if (t.y <= 0) {
+            t.y = 0;
+            t.vy *= -1;
+        } else if (t.y + t.size >= winHeight) {
+            t.y = winHeight - t.size;
+            t.vy *= -1;
+        }
+        
+        t.element.style.transform = `translate(${t.x}px, ${t.y}px)`;
+    });
+    
+    requestAnimationFrame(animateTurtles);
+}
+
+// 網頁初始載入時啟動飄動系統
+initFloatingTurtles();
+animateTurtles();

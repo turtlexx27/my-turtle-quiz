@@ -6,12 +6,26 @@
     <title>龜龜心理測驗</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
+<div id="collection-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-btn" id="close-collection" onclick="document.getElementById('collection-modal').style.display='none'">&times;</span>
+        <h2 style="text-align: center; margin-top: 5px;">龜龜圖鑑</h2>
+        <!-- 圖鑑網格 -->
+        <div id="collection-grid" class="collection-grid">
+            <!-- JS 會自動在這裡產生 16 個格子 -->
+        </div>
+    </div>
+</div>
+
 <body>
+    <div id="floating-bg"></div>
     <!-- 首頁 -->
     <div id="start-page" class="page active">
         <h1>你是哪種龜龜？</h1>
         <p>16型龜龜測驗 超準 不準是你的問題</p>
         <button id="start-btn">開始</button>
+        <button id="collection-btn-start" class="secondary-btn">龜龜圖鑑</button>
     </div>
 
     <!-- 測驗頁 -->
@@ -80,8 +94,9 @@
         </div>
         
         <button id="restart-btn">再測一次</button>
+        <button id="collection-btn-result" class="secondary-btn" onclick="openCollection()">龜龜圖鑑</button>
     </div>
-
+    
     <script src="script.js"></script>
 </body>
 </html>

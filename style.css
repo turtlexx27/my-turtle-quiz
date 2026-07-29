@@ -191,7 +191,145 @@ button:active {
 .y-fill {
     background: linear-gradient(135deg, #92c5e5 0%, #044b68 100%);
 }
+/* 次要按鈕樣式 (給圖鑑按鈕用) */
+.secondary-btn {
+    background: #f2f2f7;
+    color: #1d1d1f;
+    margin-top: 15px;
+}
 
+/* 彈出視窗 (Modal) 背景 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* 彈出視窗的白色內容區塊 */
+.modal-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 450px;
+    max-height: 80vh;
+    overflow-y: auto; /* 如果內容太多，允許上下滑動 */
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* 關閉按鈕 X */
+/* 關閉按鈕 X (釘選在右上角，往下滑也不會消失) */
+.close-btn {
+    position: sticky;      /* 💡 關鍵：讓它滾動時黏在畫面上 */
+    top: 0px;            /* 黏在最頂部 */
+    float: right;          /* 靠右對齊 */
+    margin-right: -10px;
+    margin-bottom: -30px;  /* 負邊距，避免把下面的標題擠下去 */
+    
+    /* 視覺優化：加上圓形白底與一點陰影，讓它蓋在圖鑑上依然清晰可見 */
+    background: rgba(255, 255, 255, 0.95);
+    width: 38px;
+    height: 38px;
+    line-height: 34px;     /* 文字垂直置中 */
+    text-align: center;    /* 文字水平置中 */
+    border-radius: 50%;    /* 變成圓形 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    
+    font-size: 26px;
+    font-weight: bold;
+    color: #8e8e93;
+    cursor: pointer;
+    z-index: 100;          /* 確保它永遠在最上層 */
+}
+
+/* 2x8 圖鑑網格 */
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 切成兩欄 */
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* 每一個龜龜格子的樣式 */
+.collection-item {
+    background: #f5f5f7;
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.collection-item img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.collection-item p {
+    font-size: 14px;
+    margin: 0;
+    font-weight: 700;
+}
+
+/* 未解鎖的樣式：模糊 + 灰階 */
+.locked img {
+    filter: grayscale(100%) blur(6px);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.locked p {
+    color: #8e8e93;
+}
+
+/* 確保白色卡片在最上層 */
+.page {
+    position: relative;
+    z-index: 2;
+}
+
+/* 飄動背景容器 */
+#floating-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none; /* 關鍵：讓滑鼠點擊直接穿透 */
+    overflow: hidden;
+}
+
+.floating-turtle {
+    position: absolute;
+    width: 180px;           /* 稍微放大一點點，因為去背後視覺上會變小 */
+    height: auto;          /* 讓高度自動等比例縮放 */
+    opacity: 0.6;          /* 半透明才不會太搶戲 */
+    
+    /* 關鍵去背魔法：讓圖片的白色背景直接變透明 */
+    mix-blend-mode: multiply;
+    
+    /* 改用 drop-shadow 讓陰影貼合龜龜的真實輪廓，而不是一個方塊或圓圈 */
+    filter: drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.3));
+    
+    top: 0;
+    left: 0;
+    will-change: transform; 
+}
 /* 手機版專屬排版 */
 @media (max-width: 900px) {
     body {
