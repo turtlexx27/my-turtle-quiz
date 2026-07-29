@@ -434,9 +434,6 @@ function initFloatingTurtles() {
             img.className = "floating-turtle";
             
             const size = 100;
-
-
-
             
             // 隨機初始位置
             const x = Math.random() * (window.innerWidth - size);
@@ -467,8 +464,8 @@ function animateTurtles() {
     
     if (winWidth <= 900) {
         // 這是手機版的設定
-        shiftX = -100; 
-        shiftY = -100; 
+        shiftX = -200; 
+        shiftY = -200; 
     } else {
         // 這是電腦版的設定
         shiftX = 40; 
