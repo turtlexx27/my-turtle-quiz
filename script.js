@@ -434,8 +434,7 @@ function initFloatingTurtles() {
             img.className = "floating-turtle";
             
             const size = 100;
-            if (winWidth <= 900) {
-                size=50;}
+
 
 
             
