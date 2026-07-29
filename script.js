@@ -249,6 +249,8 @@ function showResult() {
         unlockedTurtles.push(resultKey);
         localStorage.setItem("unlockedTurtles", JSON.stringify(unlockedTurtles));
     }
+    initFloatingTurtles();
+    document.getElementById("floating-bg").style.display = "block";
     document.getElementById("result-title").innerText = finalResult.title;
     // 使用 innerHTML 讓結果敘述裡的 <br> 可以正常換行
     document.getElementById("result-desc").innerHTML = finalResult.desc;
@@ -368,6 +370,27 @@ function renderCollection() {
         grid.appendChild(itemDiv);
     });
 }
+// ==========================================
+// 清除所有資料邏輯
+// ==========================================
+document.getElementById("clear-btn").addEventListener("click", () => {
+    // 跳出確認視窗，避免玩家誤觸
+    const confirmDelete = confirm("確定要清除所有龜龜圖鑑與測驗紀錄嗎？");
+    
+    if (confirmDelete) {
+        // 1. 清除瀏覽器記憶
+        localStorage.removeItem("unlockedTurtles");
+        
+        // 2. 清除程式內的變數
+        unlockedTurtles = [];
+        
+        // 3. 重新渲染圖鑑 (全部變回未解鎖)
+        renderCollection();
+        
+        // 4. 重新初始化背景 (把飄動的龜龜清空)
+        initFloatingTurtles();
+    }
+});
 // ==========================================
 // 解鎖龜龜背景飄動系統
 // ==========================================

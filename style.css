@@ -332,6 +332,22 @@ button:active {
 }
 /* 手機版專屬排版 */
 @media (max-width: 900px) {
+    .floating-turtle {
+        position: absolute;
+        width: 100px;           /* 稍微放大一點點，因為去背後視覺上會變小 */
+        height: auto;          /* 讓高度自動等比例縮放 */
+        opacity: 0.6;          /* 半透明才不會太搶戲 */
+        
+        /* 關鍵去背魔法：讓圖片的白色背景直接變透明 */
+        mix-blend-mode: multiply;
+        
+        /* 改用 drop-shadow 讓陰影貼合龜龜的真實輪廓，而不是一個方塊或圓圈 */
+        filter: drop-shadow(0px 4px 5px rgba(0, 0, 0, 0.3));
+        
+        top: 0;
+        left: 0;
+        will-change: transform; 
+    }
     body {
         background-image: url('images/bgsg.png') !important;
         
