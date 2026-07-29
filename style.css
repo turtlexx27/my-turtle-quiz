@@ -330,6 +330,22 @@ button:active {
     left: 0;
     will-change: transform; 
 }
+/* 彩蛋表單輸入框樣式 */
+.jackpot-input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #c7c7cc;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f2f2f7;
+}
+
+.jackpot-input:focus {
+    outline: none;
+    border-color: #007aff;
+    background-color: #ffffff;
+}
 /* 手機版專屬排版 */
 @media (max-width: 900px) {
     .floating-turtle {

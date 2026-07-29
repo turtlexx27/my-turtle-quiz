@@ -245,10 +245,21 @@ function showResult() {
     
     const resultKey = `${levelX}_${levelY}`;
     const finalResult = resultData[resultKey];
+    // 如果這隻龜龜還沒被解鎖，就把它加進清單並存檔
     if (!unlockedTurtles.includes(resultKey)) {
         unlockedTurtles.push(resultKey);
         localStorage.setItem("unlockedTurtles", JSON.stringify(unlockedTurtles));
+        
+        // 新增這段：檢查是否達到 16 隻
+        if (unlockedTurtles.length === 16) {
+            // 延遲 1.5 秒彈出，讓玩家有時間先看一眼最後一隻龜龜
+            setTimeout(() => {
+                document.getElementById("jackpot-modal").style.display = "flex";
+            }, 1500);
+        }
     }
+
+    // 更新飄動系統，並把背景顯示出來
     initFloatingTurtles();
     document.getElementById("floating-bg").style.display = "block";
     document.getElementById("result-title").innerText = finalResult.title;
@@ -274,6 +285,7 @@ function showResult() {
     } else {
         resultImg.style.display = "none";
     }
+    
 }
 
 // 10. 再測一次
@@ -286,6 +298,7 @@ document.getElementById("restart-btn").addEventListener("click", () => {
         quizPage.scrollTop = 0; 
     }, 50);
 });
+
 
 // 圖片預載功能：在背景先下載好所有題目與結果的圖片
 function preloadImages() {
@@ -443,8 +456,8 @@ function animateTurtles() {
     
     if (winWidth <= 900) {
         // 這是手機版的設定
-        shiftX = 10; 
-        shiftY = 10; 
+        shiftX = -10; 
+        shiftY = -10; 
     } else {
         // 這是電腦版的設定
         shiftX = 40; 
