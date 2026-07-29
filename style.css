@@ -319,7 +319,7 @@ button:active {
     width: 180px;           /* 稍微放大一點點，因為去背後視覺上會變小 */
     height: auto;          /* 讓高度自動等比例縮放 */
     opacity: 0.6;          /* 半透明才不會太搶戲 */
-    
+    object-fit: contain;
     /* 關鍵去背魔法：讓圖片的白色背景直接變透明 */
     mix-blend-mode: multiply;
     
@@ -337,7 +337,7 @@ button:active {
         width: 100px;           /* 稍微放大一點點，因為去背後視覺上會變小 */
         height: auto;          /* 讓高度自動等比例縮放 */
         opacity: 0.6;          /* 半透明才不會太搶戲 */
-        
+        object-fit: contain;
         /* 關鍵去背魔法：讓圖片的白色背景直接變透明 */
         mix-blend-mode: multiply;
         

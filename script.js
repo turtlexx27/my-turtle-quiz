@@ -389,6 +389,7 @@ document.getElementById("clear-btn").addEventListener("click", () => {
         
         // 4. 重新初始化背景 (把飄動的龜龜清空)
         initFloatingTurtles();
+         sessionStorage.setItem("isAdult", "false");
     }
 });
 // ==========================================
@@ -411,7 +412,7 @@ function initFloatingTurtles() {
             img.src = turtle.img;
             img.className = "floating-turtle";
             
-            const size = 70; // 對應 CSS 設定的寬度
+            const size = 100;
             
             // 隨機初始位置
             const x = Math.random() * (window.innerWidth - size);
@@ -435,34 +436,87 @@ function initFloatingTurtles() {
 function animateTurtles() {
     const winWidth = window.innerWidth;
     const winHeight = window.innerHeight;
-    
+    const numTurtles = floatingTurtles.length;
+
+    // 💡 碰撞箱偏移量 (數值越大，圖片就越往左上縮，讓碰撞箱在視覺上往右下移動)
+    const shiftX = 40; 
+    const shiftY = 40;
+
+    // 1. 移動碰撞箱的中心點 (現在 t.x 與 t.y 代表的是真實碰撞中心的座標)
     floatingTurtles.forEach(t => {
         t.x += t.vx;
         t.y += t.vy;
-        
-        // 邊界碰撞判定 (碰到邊緣就反轉速度)
-        if (t.x <= 0) {
-            t.x = 0;
-            t.vx *= -1;
-        } else if (t.x + t.size >= winWidth) {
-            t.x = winWidth - t.size;
-            t.vx *= -1;
-        }
-        
-        if (t.y <= 0) {
-            t.y = 0;
-            t.vy *= -1;
-        } else if (t.y + t.size >= winHeight) {
-            t.y = winHeight - t.size;
-            t.vy *= -1;
-        }
-        
-        t.element.style.transform = `translate(${t.x}px, ${t.y}px)`;
     });
-    
+
+    // 2. 龜龜與龜龜的碰撞 (完全基於中心點計算，不再受圖片邊界影響)
+    for (let i = 0; i < numTurtles; i++) {
+        let t1 = floatingTurtles[i];
+        for (let j = i + 1; j < numTurtles; j++) {
+            let t2 = floatingTurtles[j];
+
+            let dx = t1.x - t2.x;
+            let dy = t1.y - t2.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            
+            let sumRadii = (t1.size * 0.55) + (t2.size * 0.55);
+
+            if (distance < sumRadii) {
+                let nx = dx / distance;
+                let ny = dy / distance;
+
+                let tempVx = t1.vx;
+                let tempVy = t1.vy;
+                t1.vx = t2.vx;
+                t1.vy = t2.vy;
+                t2.vx = tempVx;
+                t2.vy = tempVy;
+
+                let overlap = sumRadii - distance;
+                t1.x += nx * (overlap / 2);
+                t1.y += ny * (overlap / 2);
+                t2.x -= nx * (overlap / 2);
+                t2.y -= ny * (overlap / 2);
+            }
+        }
+    }
+
+    // 3. 螢幕邊緣碰撞 (用真實半徑計算，解決以前貼壁不均勻的問題)
+    floatingTurtles.forEach(t => {
+        let radius = t.size * 0.35; // 真實碰撞半徑
+
+        // X 軸邊界
+        if (t.x + radius >= winWidth) {
+            t.x = winWidth - radius;
+            t.vx = -Math.abs(t.vx);
+        } else if (t.x - radius <= 0) {
+            t.x = radius;
+            t.vx = Math.abs(t.vx);
+        }
+
+        // Y 軸邊界
+        if (t.y + radius >= winHeight) {
+            t.y = winHeight - radius;
+            t.vy = -Math.abs(t.vy);
+        } else if (t.y - radius <= 0) {
+            t.y = radius;
+            t.vy = Math.abs(t.vy);
+        }
+    });
+
+    // 4. 繪製畫面：將圖片渲染在偏移過的位置上
+    floatingTurtles.forEach(t => {
+        // t.x, t.y 是碰撞箱中心。
+        // 減去 size/2 將圖片置中，再減去 shiftX 與 shiftY 把圖片往左上推。
+        let renderX = t.x - (t.size / 2) - shiftX;
+        let renderY = t.y - (t.size / 2) - shiftY;
+        
+        t.element.style.transform = `translate(${renderX}px, ${renderY}px)`;
+    });
+
     requestAnimationFrame(animateTurtles);
 }
 
+   
 // 網頁初始載入時啟動飄動系統
 initFloatingTurtles();
 animateTurtles();
