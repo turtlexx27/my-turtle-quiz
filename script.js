@@ -456,8 +456,8 @@ function animateTurtles() {
     
     if (winWidth <= 900) {
         // 這是手機版的設定
-        shiftX = -10; 
-        shiftY = -10; 
+        shiftX = -100; 
+        shiftY = -100; 
     } else {
         // 這是電腦版的設定
         shiftX = 40; 
@@ -542,3 +542,34 @@ function animateTurtles() {
 // 網頁初始載入時啟動飄動系統
 initFloatingTurtles();
 animateTurtles();
+
+// ==========================================
+// 全圖鑑彩蛋邏輯
+// ==========================================
+const jackpotModal = document.getElementById("jackpot-modal");
+const jackpotFormContainer = document.getElementById("jackpot-form-container");
+const jackpotSuccessContainer = document.getElementById("jackpot-success-container");
+const jackpotSubmitBtn = document.getElementById("jackpot-submit-btn");
+const jackpotClaimBtn = document.getElementById("jackpot-claim-btn");
+
+// 點擊「確認送出」按鈕
+jackpotSubmitBtn.addEventListener("click", () => {
+    // 簡單檢查一下有沒有填寫姓名，如果有漏填可以警告，也可以不檢查直接過
+    const lastName = document.getElementById("jackpot-lastname").value;
+    const firstName = document.getElementById("jackpot-firstname").value;
+    
+    if (lastName === "" || firstName === "") {
+        alert("請至少填寫您的姓名喔！");
+        return;
+    }
+    
+    // 隱藏表單，顯示恭喜畫面
+    jackpotFormContainer.style.display = "none";
+    jackpotSuccessContainer.style.display = "block";
+});
+
+// 點擊「馬上拿」按鈕 (強制跳轉到 YouTube 生日快樂歌)
+jackpotClaimBtn.addEventListener("click", () => {
+    // 這裡替換成你要的 YouTube 生日歌網址
+    window.location.href = "https://www.youtube.com/watch?v=jqYxyd1iSNk"; 
+});
