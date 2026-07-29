@@ -258,17 +258,25 @@ function showResult() {
     document.getElementById("floating-bg").style.display = "block";
 
     // 3. 全圖鑑彩蛋觸發邏輯 (已修復：16隻條件與防重複)
-    if (unlockedTurtles.length >= 15 && localStorage.getItem("jackpotShown") !== "true") {
+    if (unlockedTurtles.length >= 16 && localStorage.getItem("jackpotShown") !== "true") {
         localStorage.setItem("jackpotShown", "true");
         
         setTimeout(() => {
             const jackpot = document.getElementById("jackpot-modal");
             if(jackpot) {
+                // 強制賦予全螢幕置中樣式，防止它躲在網頁最底下
                 jackpot.style.display = "flex";
-                jackpot.style.zIndex = "9999"; 
+                jackpot.style.position = "fixed";
+                jackpot.style.top = "0";
+                jackpot.style.left = "0";
+                jackpot.style.width = "100vw";
+                jackpot.style.height = "100vh";
+                jackpot.style.backgroundColor = "rgba(0, 0, 0, 0.85)"; // 半透明黑底
+                jackpot.style.alignItems = "center";
+                jackpot.style.justifyContent = "center";
+                jackpot.style.zIndex = "999999"; // 確保在全宇宙的最上層
             } else {
-                // 如果 HTML 沒貼好，這裡會明確跳出警告，而不是直接當機
-                alert("警告：找不到彩蛋視窗！請檢查 index.html 是否有貼上 jackpot-modal 的程式碼。");
+                alert("警告：找不到彩蛋視窗！請檢查 index.html。");
             }
         }, 1500);
     }
@@ -455,24 +463,25 @@ function initFloatingTurtles() {
 }
 
 function animateTurtles() {
-    const winWidth = window.innerWidth;
-    const winHeight = window.innerHeight;
+    // 💡 關鍵修改：改用 clientWidth/clientHeight，這是最精準的實際可視範圍
+    const winWidth = document.documentElement.clientWidth;
+    const winHeight = document.documentElement.clientHeight;
     const numTurtles = floatingTurtles.length;
 
-    // 💡 碰撞箱偏移量 (數值越大，圖片就越往左上縮，讓碰撞箱在視覺上往右下移動)
     let shiftX, shiftY;
     
+    // 現在有了 meta viewport，手機寬度絕對會小於 900 了
     if (winWidth <= 900) {
-        // 這是手機版的設定
-        shiftX = -150; 
-        shiftY = -150; 
+        // 請先把這裡改回較小的數字測試，因為手機不會再誤用電腦版設定了
+        shiftX = 15; 
+        shiftY = 15; 
     } else {
         // 這是電腦版的設定
         shiftX = 40; 
         shiftY = 40; 
     }
 
-    // 1. 移動碰撞箱的中心點 (現在 t.x 與 t.y 代表的是真實碰撞中心的座標)
+    // 1. 移動碰撞箱的中心點
     floatingTurtles.forEach(t => {
         t.x += t.vx;
         t.y += t.vy;
