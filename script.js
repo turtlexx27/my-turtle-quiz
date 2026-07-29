@@ -473,8 +473,8 @@ function animateTurtles() {
     // 現在有了 meta viewport，手機寬度絕對會小於 900 了
     if (winWidth <= 900) {
         // 請先把這裡改回較小的數字測試，因為手機不會再誤用電腦版設定了
-        shiftX = -10; 
-        shiftY = -10; 
+        shiftX = -40; 
+        shiftY = -40; 
     } else {
         // 這是電腦版的設定
         shiftX = 40; 
