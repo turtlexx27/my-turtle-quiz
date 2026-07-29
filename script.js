@@ -464,8 +464,8 @@ function animateTurtles() {
     
     if (winWidth <= 900) {
         // 這是手機版的設定
-        shiftX = -200; 
-        shiftY = -200; 
+        shiftX = -300; 
+        shiftY = -300; 
     } else {
         // 這是電腦版的設定
         shiftX = 40; 
